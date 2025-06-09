@@ -1,4 +1,4 @@
-DEBUG =
+DEBUG = -O0 -pg -g
 
 OPTIONS = -arch=sm_80 -gencode=arch=compute_80,code=sm_80 -Xptxas -v -maxrregcount 64 -Lbliss -lbliss
 GPU_MATCH = src/gpu_match.cu 

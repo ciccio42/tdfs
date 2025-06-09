@@ -12,26 +12,39 @@ using namespace std;
 
 inline bool nextSNAPline(ifstream &infile, string &line, istringstream &iss, vidType &src, vidType &dest) {
 	do {
-		if(!getline(infile, line))
+    // std::cout << "\rreading line " << line << "\n";
+    if(!getline(infile, line))
 			return false;
-	} while(line.length() == 0 || line[0] == '#');
-	iss.clear();
-	iss.str(line);
+	} while(line.length() == 0 || line[0] == '#' || line[0] == 'v'); 
+	
+  if (line[0] == 'e') {
+    line = line.substr(2); // remove 'e '
+    // remove the edge label if it exists
+    // std::cout << "\rreading line " << line << std::flush;
+  }
+  iss.clear();
+  iss.str(line);
 	return !!(iss >> src >> dest);
+
 }
 
-inline void getID(vector<vidType> &idMap, vidType &id, vidType &nextID) {
+inline void getID(vector<vidType> &idMap, vidType &id, vidType &nextID, bool vf_db) {
   if(idMap.size() <= id) {
     idMap.resize(id + 2048, (vidType)(-1));
   }
   if(idMap.at(id) == (vidType)(-1)) {
-    idMap.at(id) = nextID;
-    nextID++;
+    if (vf_db){
+      idMap.at(id) = id; // in vf_db, we do not remap ids
+    }
+    else{
+      idMap.at(id) = nextID;
+      nextID++;
+    }
   }
   id = idMap.at(id);
 }
 
-void snapToBin(string fname) {
+void snapToBin(string fname, bool vf_db) {
   constexpr int inc = 65536;
   ifstream infile(fname.c_str());
   ofstream outfile((fname + ".bin").c_str(), ios::binary);
@@ -52,8 +65,9 @@ void snapToBin(string fname) {
   size_t lineNum = 0;
 	while(nextSNAPline(infile, line, iss, edge[0], edge[1])) {
     if(++lineNum % 1000000 == 0) LOG("%lu edges read", lineNum);
-		getID(idMap, edge[0], nextID);
-    getID(idMap, edge[1], nextID);
+    // std::cout << "src " << edge[0] << " dest " << edge[1] << "\n";
+		getID(idMap, edge[0], nextID, vf_db);
+    getID(idMap, edge[1], nextID, vf_db);
     max_id = std::max(edge[0], max_id);
     max_id = std::max(edge[1], max_id);
     if(max_id >= degrees.size()) degrees.resize(max_id + inc);
@@ -73,12 +87,14 @@ void snapToBin(string fname) {
 }
 
 int main(int argc, char** argv) {
-  if(argc != 2) {
+  bool vf_db = false;
+  if(argc > 3) {
     cerr << "usage: ./convert <snap file>\n";
     return 1;
   }
+  vf_db = bool(atoi(argv[2]));
   string fname = argv[1];
-	snapToBin(fname);
+  snapToBin(fname, vf_db);
   cout << "snapToBin done\n" << std::flush;
 	return 0;
 }

@@ -27,6 +27,7 @@ void makeLists(std::string fname) {
   vidType n_vertices = degree_map.size();
   std::vector<uint64_t> offset(n_vertices + 1);
   offset.at(0) = 0;
+  // Initialize the offsets for each vertex
   std::cout << "starting scan\n" << std::flush;
   __gnu_parallel::partial_sum(degree_map.begin(), degree_map.end(), offset.data() + 1);
   std::cout << "done, writing offsets\n" << std::flush;

@@ -1,6 +1,6 @@
 
 #CC := /scratch/env/usr/bin/g++ -std=c++17 -O3
-CC := g++ -std=c++17 -O3
+CC := g++ -std=c++17 -O0 -pg -g # -03 
 CFLAGS := -fopenmp -Wall -Werror=return-type -Wshadow #-Wno-unused-variable -Wno-reorder
 
 #NV := nvcc -ccbin g++ -m64 -std=c++14 -O3
