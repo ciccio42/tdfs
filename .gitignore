@@ -15,3 +15,6 @@ graph_converter/core.*
 bin/*
 core*
 *out
+convertion_scripts/*.grf
+convertion_scripts/*.txt
+convertion_scripts/*.sub.grf
