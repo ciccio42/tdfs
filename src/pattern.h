@@ -120,22 +120,26 @@ namespace STMatch
     void readfile(std::string &filename)
     {
       // std::cout << filename << std::endl;
-
       std::ifstream fin(filename);
       std::string line;
       while (std::getline(fin, line) && (line[0] == '#'))
-        ;
+      {
+        std::cout << "Skipping comment line: " << line << std::endl;
+      }
       pat.nnodes = 0;
 
       do
       {
         std::istringstream sin(line);
+        sin.clear();
+        // std::cout << "Reading line: " << line << std::endl;
         char tmp;
         int v;
         int label;
         sin >> tmp >> v >> label;
         if (LABELED)
         {
+          // std::cout << "Reading vertex " << v << " with label " << label << std::endl;
           vertex_labels.push_back(label);
         }
         else
@@ -145,11 +149,14 @@ namespace STMatch
         pat.nnodes++;
       } while (std::getline(fin, line) && (line[0] == 'v'));
 
+      // resize adj_matrix
+
       memset(adj_matrix_, 0, sizeof(adj_matrix_));
       do
       {
         std::istringstream sin(line);
-        std::cout << "Reading edge" << line << std::endl;
+        sin.clear();
+        // std::cout << "Reading edge" << line << std::endl;
         char tmp;
         int v1, v2;
         int label;

@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-if test $# -ne 1
-then
+if test $# -ne 1; then
   echo "usage: ./convert.sh <dir containing snap.txt>" 1>&2
   exit 1
 fi
@@ -11,7 +10,7 @@ fname="${dir}/snap.txt"
 
 make
 
-:<<END
+: <<END
 # to convert from webgraph, download it from http://webgraph.di.unimi.it/ and set the path below
 webgraph_path=""
 if ! test -f "${fname}"
@@ -21,7 +20,7 @@ then
     echo
     date
     printf "\nWEBGRAPH TO SNAP\n"
-    java -cp $(echo "${webgraph_path}"/*.jar|tr " " ":") it.unimi.dsi.webgraph.ArcListASCIIGraph -g BVGraph "${webgraph//.properties/}" "${fname}"
+    java -cp $(echo "${webgraph_path}"/*.jar | tr " " ":") it.unimi.dsi.webgraph.ArcListASCIIGraph -g BVGraph "${webgraph//.properties/}" "${fname}"
   done
 fi
 END
@@ -29,10 +28,10 @@ END
 echo
 date
 printf "\nSNAP TO BIN\n"
-bin/snapToBin "${fname}"
+bin/snapToBin "${fname}" 0
 rm "${fname}"
 
-# NOTE fname.bin and fname.rev.bin are BIG-ENDIAN
+# # NOTE fname.bin and fname.rev.bin are BIG-ENDIAN
 
 echo
 date
@@ -48,7 +47,7 @@ rm "${fname}.bin" "${fname}.rev.bin" "${fname}.raw.degree.bin"
 echo
 date
 printf "\nCOMPACTIFY\n"
-bin/compactify "${fname}"
+gdbserver localhost:1236 bin/compactify "${fname}"
 rm "${fname}.raw.edge.bin" "${fname}.raw.vertex.bin"
 
 echo
@@ -59,10 +58,9 @@ bin/halve "${fname}"
 echo
 date
 printf "\nLABELIZE\n"
-bin/labelize "${fname}"
+bin/labelize "${fname}" 0
 
-#echo
-#date
-#printf "\nRELABEL\n"
-#bin/relabel "${fname}"
-
+echo
+date
+printf "\nRELABEL\n"
+bin/relabel "${fname}"

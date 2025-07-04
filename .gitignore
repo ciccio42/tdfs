@@ -13,3 +13,5 @@ cu_test
 data/*
 graph_converter/core.*
 bin/*
+core*
+*out

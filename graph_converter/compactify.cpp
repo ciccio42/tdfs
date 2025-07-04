@@ -33,7 +33,7 @@ void compactify(std::string fname) {
 
   vidType max_degree = 0;
   auto edge = MemoryMappedFile<vidType>::Write(fname + ".edge.bin", n_edges);
-  #pragma omp parallel for schedule(dynamic,64) reduction(max:max_degree)
+  //#pragma omp parallel for schedule(dynamic,1) reduction(max:max_degree)
   for(vidType v = 0; v < n_vertices; v++) {
     if(v % 100000 == 0) LOG("%u vertices compacted", v);
     uint64_t raw_low = raw_vertex[v];

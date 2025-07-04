@@ -6,6 +6,8 @@ graphs=(
     #https://snap.stanford.edu/data/bigdata/communities/com-orkut.ungraph.txt.gz
     #https://snap.stanford.edu/data/bigdata/communities/com-friendster.ungraph.txt.gz
 )
+
+rm -f ${txtdir}*.gz
 txtdir=../data/txt_graph/
 bindir=../data/bin_graph/
 mkdir -p ${txtdir}
@@ -15,8 +17,9 @@ for graph in ${graphs[@]}; do
     wget -nc -P ${txtdir} ${graph}
 done
 gzip -f -d ${txtdir}*
+rm -f ${txtdir}*.gz
 
-cp ../data/local_txt_graph/mico.txt ${txtdir}
+# cp ../data/local_txt_graph/mico.txt ${txtdir}
 
 for graph in ${txtdir}*; do
     filename=${graph##*/}
